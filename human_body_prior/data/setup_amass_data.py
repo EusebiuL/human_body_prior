@@ -14,7 +14,7 @@ logger('[%s] Preparing data for training VPoser.'%expr_code)
 amass_splits = {
     'vald': ['HumanEva', 'MPIHDM05', 'SFU', 'MPImosh'],
     'test': ['Transitions_mocap', 'SSMsynced'],
-    'train': ['CMU', 'MPILimits', 'TotalCapture', 'Eyes_Japan_Dataset', 'KIT', 'BMLmovi', 'BMLrub', 'EKUT', 'TCDhandMocap', 'ACCAD']
+    'train': ['CMU', 'MPILimits', 'TotalCapture', 'EyesJapanDataset', 'KIT', 'BMLmovi', 'BMLrub', 'EKUT', 'TCDhandMocap', 'ACCAD']
 }
 amass_splits['train'] = list(set(amass_splits['train']).difference(set(amass_splits['test'] + amass_splits['vald'])))
 
