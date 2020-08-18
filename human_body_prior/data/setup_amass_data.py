@@ -1,10 +1,11 @@
 import os
 from human_body_prior.tools.omni_tools import makepath, log2file
 from human_body_prior.data.prepare_data import prepare_vposer_datasets
+from datetime import datetime
 
-expr_code = 'uniqueid1'
+expr_code = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
-amass_dir = '/content/drive/My\ Drive/LAZAR/AMASS'
+amass_dir = r'/content/drive/My\ Drive/LAZAR/AMASS'
 
 vposer_datadir = makepath('prepared/%s' % (expr_code))
 
