@@ -23,14 +23,15 @@
 
 from human_body_prior.train.vposer_smpl import run_vposer_trainer
 from configer import Configer
+from datetime import datetime
 
-expr_code = 'SOME_UNIQUE_ID'
+expr_code = datetime.now().strftime("%d %m %Y %H:%M:%S")
 args = {
     'expr_code' : expr_code,
     'base_lr': 0.005,
 
-    'dataset_dir': 'VPOSER_DATA_DIR_PRODUCED_BEFORE',
-    'work_dir': 'BASE_WORKing_DIR/%s'%expr_code, # Later you will give this pass to vposer_loader to load the model
+    'dataset_dir': r'/content/drive/My Drive/LAZAR/stage_III',
+    'work_dir': 'trained/%s'%expr_code, # Later you will give this pass to vposer_loader to load the model
 }
 ps = Configer(default_ps_fname='./vposer_smpl_defaults.ini', **args) # This is the default configuration
 

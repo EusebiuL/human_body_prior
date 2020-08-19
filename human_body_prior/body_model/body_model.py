@@ -57,7 +57,7 @@ class BodyModel(nn.Module):
 
         self.dtype = dtype
 
-        if params is None: params = {}
+        if params is None: params = dict()
 
         # -- Load SMPL params --
         if '.npz' in bm_path:
@@ -91,11 +91,11 @@ class BodyModel(nn.Module):
 
         self.register_buffer('f', torch.tensor(smpl_dict['f'].astype(np.int32), dtype=torch.int32))
 
-        if len(params):
-            if 'betas' in params.keys():
-                num_betas = params['betas'].shape[1]
-            if 'dmpls' in params.keys():
-                num_dmpls = params['dmpls'].shape[1]
+        #if len(params):
+         #   if 'betas' in params.keys():
+          #      num_betas = params['betas'].shape[1]
+           # if 'dmpls' in params.keys():
+            #    num_dmpls = params['dmpls'].shape[1]
 
         num_total_betas = smpl_dict['shapedirs'].shape[-1]
         if num_betas < 1:
@@ -138,10 +138,10 @@ class BodyModel(nn.Module):
         weights = smpl_dict['weights']
         self.register_buffer('weights', torch.tensor(weights, dtype=dtype))
 
-        if 'trans' in params.keys():
-            trans = params['trans']
-        else:
-            trans = torch.tensor(np.zeros((batch_size, 3)), dtype=dtype, requires_grad=True)
+        #if 'trans' in params.keys():
+         #   trans = params['trans']
+        #else:
+        trans = torch.tensor(np.zeros((batch_size, 3)), dtype=dtype, requires_grad=True)
         self.register_parameter('trans', nn.Parameter(trans, requires_grad=True))
 
         # root_orient
@@ -155,15 +155,15 @@ class BodyModel(nn.Module):
             self.register_parameter('pose_body', nn.Parameter(pose_body, requires_grad=True))
 
         # pose_hand
-        if 'pose_hand' in params.keys():
-            pose_hand = params['pose_hand']
-        else:
-            if self.model_type in ['smpl']:
-                pose_hand = torch.tensor(np.zeros((batch_size, 1 * 3 * 2)), dtype=dtype, requires_grad=True)
-            elif self.model_type in ['smplh', 'smplx']:
-                pose_hand = torch.tensor(np.zeros((batch_size, 15 * 3 * 2)), dtype=dtype, requires_grad=True)
-            elif self.model_type in ['mano']:
-                pose_hand = torch.tensor(np.zeros((batch_size, 15 * 3)), dtype=dtype, requires_grad=True)
+       # if 'pose_hand' in params.keys():
+       #     pose_hand = params['pose_hand']
+        #else:
+        if self.model_type in ['smpl']:
+            pose_hand = torch.tensor(np.zeros((batch_size, 1 * 3 * 2)), dtype=dtype, requires_grad=True)
+        elif self.model_type in ['smplh', 'smplx']:
+            pose_hand = torch.tensor(np.zeros((batch_size, 15 * 3 * 2)), dtype=dtype, requires_grad=True)
+        elif self.model_type in ['mano']:
+            pose_hand = torch.tensor(np.zeros((batch_size, 15 * 3)), dtype=dtype, requires_grad=True)
         self.register_parameter('pose_hand', nn.Parameter(pose_hand, requires_grad=True))
 
         # face poses
@@ -173,17 +173,17 @@ class BodyModel(nn.Module):
             pose_eye = torch.tensor(np.zeros((batch_size, 2 * 3)), dtype=dtype, requires_grad=True)
             self.register_parameter('pose_eye', nn.Parameter(pose_eye, requires_grad=True))
 
-        if 'betas' in params.keys():
-            betas = params['betas']
-        else:
-            betas = torch.tensor(np.zeros((batch_size, num_betas)), dtype=dtype, requires_grad=True)
+        #if 'betas' in params.keys():
+        #    betas = params['betas']
+        #else:
+        betas = torch.tensor(np.zeros((batch_size, num_betas)), dtype=dtype, requires_grad=True)
         self.register_parameter('betas', nn.Parameter(betas, requires_grad=True))
 
         if self.use_dmpl:
-            if 'dmpls' in params.keys():
-                dmpls = params['dmpls']
-            else:
-                dmpls = torch.tensor(np.zeros((batch_size, num_dmpls)), dtype=dtype, requires_grad=True)
+            #if 'dmpls' in params.keys():
+             #   dmpls = params['dmpls']
+            #else:
+            dmpls = torch.tensor(np.zeros((batch_size, num_dmpls)), dtype=dtype, requires_grad=True)
             self.register_parameter('dmpls', nn.Parameter(dmpls, requires_grad=True))
         self.batch_size = batch_size
 
