@@ -87,7 +87,7 @@ class BodyModel(nn.Module):
         else:
             v_template = np.repeat(v_template[np.newaxis], batch_size, axis=0)
 
-        self.register_buffer('v_template', torch.tensor(v_template, dtype=dtype))
+        self.register_buffer('v_template', torch.tensor(v_template, dtype=torch.float32))
 
         self.register_buffer('f', torch.tensor(smpl_dict['f'].astype(np.int32), dtype=torch.int32))
 
@@ -102,30 +102,30 @@ class BodyModel(nn.Module):
             num_betas = num_total_betas
 
         shapedirs = smpl_dict['shapedirs'][:, :, :num_betas]
-        self.register_buffer('shapedirs', torch.tensor(shapedirs, dtype=dtype))
+        self.register_buffer('shapedirs', torch.tensor(shapedirs, dtype=torch.float32))
 
         if self.model_type == 'smplx':
             begin_shape_id = 300 if smpl_dict['shapedirs'].shape[-1] > 300 else 10
             exprdirs = smpl_dict['shapedirs'][:, :, begin_shape_id:(begin_shape_id + num_expressions)]
-            self.register_buffer('exprdirs', torch.tensor(exprdirs, dtype=dtype))
+            self.register_buffer('exprdirs', torch.tensor(exprdirs, dtype=torch.float32))
 
-            expression = torch.tensor(np.zeros((batch_size, num_expressions)), dtype=dtype, requires_grad=True)
+            expression = torch.tensor(np.zeros((batch_size, num_expressions)), dtype=torch.float32, requires_grad=True)
             self.register_parameter('expression', nn.Parameter(expression, requires_grad=True))
 
         if self.use_dmpl:
             dmpldirs = np.load(path_dmpl)['eigvec']
 
             dmpldirs = dmpldirs[:, :, :num_dmpls]
-            self.register_buffer('dmpldirs', torch.tensor(dmpldirs, dtype=dtype))
+            self.register_buffer('dmpldirs', torch.tensor(dmpldirs, dtype=torch.float32))
 
         # Regressor for joint locations given shape - 6890 x 24
-        self.register_buffer('J_regressor', torch.tensor(smpl_dict['J_regressor'], dtype=dtype))
+        self.register_buffer('J_regressor', torch.tensor(smpl_dict['J_regressor'], dtype=torch.float32))
 
         # Pose blend shape basis: 6890 x 3 x 207, reshaped to 6890*30 x 207
         if use_posedirs:
             posedirs = smpl_dict['posedirs']
             posedirs = posedirs.reshape([posedirs.shape[0] * 3, -1]).T
-            self.register_buffer('posedirs', torch.tensor(posedirs, dtype=dtype))
+            self.register_buffer('posedirs', torch.tensor(posedirs, dtype=torch.float32))
         else:
             self.posedirs = None
 
@@ -136,22 +136,22 @@ class BodyModel(nn.Module):
         # LBS weights
         # weights = np.repeat(smpl_dict['weights'][np.newaxis], batch_size, axis=0)
         weights = smpl_dict['weights']
-        self.register_buffer('weights', torch.tensor(weights, dtype=dtype))
+        self.register_buffer('weights', torch.tensor(weights, dtype=torch.float32))
 
         #if 'trans' in params.keys():
          #   trans = params['trans']
         #else:
-        trans = torch.tensor(np.zeros((batch_size, 3)), dtype=dtype, requires_grad=True)
+        trans = torch.tensor(np.zeros((batch_size, 3)), dtype=torch.float32, requires_grad=True)
         self.register_parameter('trans', nn.Parameter(trans, requires_grad=True))
 
         # root_orient
         # if self.model_type in ['smpl', 'smplh']:
-        root_orient = torch.tensor(np.zeros((batch_size, 3)), dtype=dtype, requires_grad=True)
+        root_orient = torch.tensor(np.zeros((batch_size, 3)), dtype=torch.float32, requires_grad=True)
         self.register_parameter('root_orient', nn.Parameter(root_orient, requires_grad=True))
 
         # pose_body
         if self.model_type in ['smpl', 'smplh', 'smplx']:
-            pose_body = torch.tensor(np.zeros((batch_size, 63)), dtype=dtype, requires_grad=True)
+            pose_body = torch.tensor(np.zeros((batch_size, 63)), dtype=torch.float32, requires_grad=True)
             self.register_parameter('pose_body', nn.Parameter(pose_body, requires_grad=True))
 
         # pose_hand
@@ -159,31 +159,31 @@ class BodyModel(nn.Module):
        #     pose_hand = params['pose_hand']
         #else:
         if self.model_type in ['smpl']:
-            pose_hand = torch.tensor(np.zeros((batch_size, 1 * 3 * 2)), dtype=dtype, requires_grad=True)
+            pose_hand = torch.tensor(np.zeros((batch_size, 1 * 3 * 2)), dtype=torch.float32, requires_grad=True)
         elif self.model_type in ['smplh', 'smplx']:
-            pose_hand = torch.tensor(np.zeros((batch_size, 15 * 3 * 2)), dtype=dtype, requires_grad=True)
+            pose_hand = torch.tensor(np.zeros((batch_size, 15 * 3 * 2)), dtype=torch.float32, requires_grad=True)
         elif self.model_type in ['mano']:
-            pose_hand = torch.tensor(np.zeros((batch_size, 15 * 3)), dtype=dtype, requires_grad=True)
+            pose_hand = torch.tensor(np.zeros((batch_size, 15 * 3)), dtype=torch.float32, requires_grad=True)
         self.register_parameter('pose_hand', nn.Parameter(pose_hand, requires_grad=True))
 
         # face poses
         if self.model_type == 'smplx':
-            pose_jaw = torch.tensor(np.zeros((batch_size, 1 * 3)), dtype=dtype, requires_grad=True)
+            pose_jaw = torch.tensor(np.zeros((batch_size, 1 * 3)), dtype=torch.float32, requires_grad=True)
             self.register_parameter('pose_jaw', nn.Parameter(pose_jaw, requires_grad=True))
-            pose_eye = torch.tensor(np.zeros((batch_size, 2 * 3)), dtype=dtype, requires_grad=True)
+            pose_eye = torch.tensor(np.zeros((batch_size, 2 * 3)), dtype=torch.float32, requires_grad=True)
             self.register_parameter('pose_eye', nn.Parameter(pose_eye, requires_grad=True))
 
         #if 'betas' in params.keys():
         #    betas = params['betas']
         #else:
-        betas = torch.tensor(np.zeros((batch_size, num_betas)), dtype=dtype, requires_grad=True)
+        betas = torch.tensor(np.zeros((batch_size, num_betas)), dtype=torch.float32, requires_grad=True)
         self.register_parameter('betas', nn.Parameter(betas, requires_grad=True))
 
         if self.use_dmpl:
             #if 'dmpls' in params.keys():
              #   dmpls = params['dmpls']
             #else:
-            dmpls = torch.tensor(np.zeros((batch_size, num_dmpls)), dtype=dtype, requires_grad=True)
+            dmpls = torch.tensor(np.zeros((batch_size, num_dmpls)), dtype=torch.float32, requires_grad=True)
             self.register_parameter('dmpls', nn.Parameter(dmpls, requires_grad=True))
         self.batch_size = batch_size
 
@@ -248,7 +248,7 @@ class BodyModel(nn.Module):
                             shapedirs=shapedirs, posedirs=self.posedirs,
                             J_regressor=self.J_regressor, parents=self.kintree_table[0].long(),
                             lbs_weights=self.weights,
-                            dtype=self.dtype)
+                            dtype=torch.float32)
 
         Jtr = joints + trans.unsqueeze(dim=1)
         verts = verts + trans.unsqueeze(dim=1)
