@@ -37,7 +37,7 @@ setup(name='human_body_prior',
       long_description=open("README.md").read(),
       long_description_content_type="text/markdown",
       install_requires=['torch==1.1.0', 'torchvision==0.3.0', 'tensorboardX>=1.6', 'torchgeometry==0.1.2', 'opencv-python>=4.1.0.25','configer>=1.4',
-                        'configer', 'imageio>=2.5.0', 'transforms3d>=0.3.1', 'trimesh', 'imgaug=0.2.5',
+                        'configer', 'imageio>=2.5.0', 'transforms3d>=0.3.1', 'trimesh', 'imgaug==0.2.5',
                         'smplx', 'pyrender', 'moviepy'],
       dependency_links=[
           "https://github.com/nghorbani/configer/tarball/1.4.1#egg=configer-1.4.1"
